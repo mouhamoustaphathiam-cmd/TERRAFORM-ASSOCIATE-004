@@ -6,5 +6,6 @@ resource "aws_s3_bucket" "lab_tp001" {
   tags = {
     Name = "Bucket-Tp001"
     Environment  = "Dev"
+    Owner = "MM-THIAM"
   }
 }

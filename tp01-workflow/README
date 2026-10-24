@@ -1,0 +1,306 @@
+# 🚀 TP01 — Workflow Terraform complet sur AWS S3
+
+![Terraform](https://img.shields.io/badge/Terraform-%E2%89%A5%201.12-7B42BC?logo=terraform&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-S3-FF9900?logo=amazonwebservices&logoColor=white)
+![Provider](https://img.shields.io/badge/Provider-hashicorp%2Faws%20~%3E%206.0-623CE4)
+![Region](https://img.shields.io/badge/Region-us--east--1-232F3E)
+![Git](https://img.shields.io/badge/Git-Workflow-F05032?logo=git&logoColor=white)
+![Exam](https://img.shields.io/badge/Terraform%20Associate-004-844FBA)
+![Status](https://img.shields.io/badge/Status-Completed-success)
+
+---
+
+## 📌 Objectif
+
+Déployer un premier bucket **Amazon S3** avec Terraform et parcourir **tout le cycle de vie** d'une ressource : écriture du code, initialisation, validation, planification, application, modification sur place, remplacement, puis destruction.
+
+Ce TP fait partie de ma préparation à la certification **HashiCorp Certified: Terraform Associate (004)**.
+
+### Objectifs de l'examen couverts
+
+| Code | Objectif |
+|------|----------|
+| 1a | Expliquer ce qu'est l'Infrastructure as Code |
+| 1b | Décrire les avantages de l'IaC |
+| 2a | Installer et versionner les providers Terraform |
+| 2d | Expliquer comment Terraform utilise et gère le state |
+| 3a | Décrire le workflow Terraform |
+| 3b | Initialiser un répertoire de travail |
+| 3c | Valider une configuration |
+| 3d | Générer et analyser un plan d'exécution |
+| 3e | Appliquer des changements |
+| 3f | Détruire l'infrastructure gérée par Terraform |
+| 3g | Formater la configuration |
+
+---
+
+## 🏗️ Ressource déployée
+
+| Adresse Terraform | Type | Nom dans AWS | Région |
+|-------------------|------|--------------|--------|
+| `aws_s3_bucket.lab_tp001` | Bucket S3 | `bucket-tp001-mmt` | `us-east-1` |
+
+**Tags appliqués :**
+
+| Clé | Valeur |
+|-----|--------|
+| `Name` | `Bucket-Tp001` |
+| `Environment` | `Dev` |
+| `Owner` | `MM-THIAM` |
+
+---
+
+## 📁 Structure du projet
+
+```text
+tp01-workflow/
+├── versions.tf           # Version de Terraform et du provider AWS
+├── main.tf               # Configuration du provider et du bucket S3
+├── .terraform.lock.hcl   # Versions exactes des providers (versionné)
+└── README.md
+```
+
+Fichiers générés localement et **exclus de Git** :
+
+```text
+├── .terraform/                 # Plugins des providers téléchargés par init
+├── terraform.tfstate           # État de l'infrastructure réelle
+├── terraform.tfstate.backup    # Version précédente du state
+└── tfplan                      # Plan sauvegardé
+```
+
+---
+
+## 🧩 Code
+
+### `versions.tf`
+
+```hcl
+terraform {
+  required_version = ">=1.12"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~>6.0"
+    }
+  }
+}
+```
+
+### `main.tf`
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_s3_bucket" "lab_tp001" {
+  bucket = "bucket-tp001-mmt"
+  tags = {
+    Name        = "Bucket-Tp001"
+    Environment = "Dev"
+    Owner       = "MM-THIAM"
+  }
+}
+```
+
+---
+
+## 🔄 Workflow réalisé
+
+```mermaid
+flowchart LR
+    A[Write<br/>main.tf] --> B[terraform fmt]
+    B --> C[terraform init]
+    C --> D[terraform validate]
+    D --> E[terraform plan]
+    E --> F[terraform apply]
+    F --> G["Modification ~<br/>ajout du tag Owner"]
+    G --> H["Remplacement -/+<br/>changement du nom"]
+    H --> I[terraform destroy]
+```
+
+### 1. Formatage — `terraform fmt`
+
+```bash
+terraform fmt
+```
+
+`fmt` a reformaté `main.tf` (alignement des `=` et indentation). Au second lancement, il n'a rien affiché : le fichier était déjà au format canonique. En CI, on utilise `terraform fmt -check` pour faire échouer le pipeline si le code est mal formaté.
+
+### 2. Initialisation — `terraform init`
+
+```bash
+terraform init
+```
+
+- télécharge le provider `hashicorp/aws` (série 6.x) dans `.terraform/` ;
+- crée `.terraform.lock.hcl` avec la version exacte et les empreintes du provider.
+
+### 3. Validation — `terraform validate`
+
+```bash
+terraform validate
+# Success! The configuration is valid.
+```
+
+Vérifie la syntaxe et la cohérence interne **sans contacter AWS**. Il ne peut donc pas savoir si le nom du bucket est déjà pris.
+
+### 4. Planification — `terraform plan`
+
+```text
++ resource "aws_s3_bucket" "lab_tp001" {
+    + arn    = (known after apply)
+    + bucket = "bucket-tp001-mmt"
+    + id     = (known after apply)
+    ...
+}
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+```
+
+Les attributs `(known after apply)` (`arn`, `id`, `bucket_domain_name`…) sont générés par AWS au moment de la création : Terraform ne peut pas les connaître à l'avance.
+
+### 5. Application — `terraform apply`
+
+```bash
+terraform apply
+terraform state list
+terraform state show aws_s3_bucket.lab_tp001
+# arn = "arn:aws:s3:::bucket-tp001-mmt"
+```
+
+Après l'apply, le fichier `terraform.tfstate` est créé. Un nouveau `plan` affiche :
+
+```text
+No changes. Your infrastructure matches the configuration.
+```
+
+Cela illustre l'**idempotence** : relancer le même code ne recrée rien.
+
+### 6. Modification sur place `~` — ajout d'un tag
+
+Ajout du tag `Owner`, puis application avec un plan sauvegardé :
+
+```bash
+terraform plan -out=tfplan
+terraform apply tfplan
+```
+
+```text
+~ tags_all = {
+    + "Owner" = "MM-THIAM"
+  }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+```
+
+Le bucket est mis à jour **sans être recréé**. Avec un fichier de plan, `apply` n'a pas demandé de confirmation : le plan est considéré comme déjà relu.
+
+### 7. Remplacement `-/+` — changement du nom (non appliqué)
+
+```text
+~ bucket = "bucket-tp001-mmt" -> "bucket-tp001-mmt-v2" # forces replacement
+
+Plan: 1 to add, 0 to change, 1 to destroy.
+```
+
+AWS ne permet pas de renommer un bucket : l'attribut `bucket` est **immuable**, Terraform doit donc détruire puis recréer la ressource. En production, cela signifierait une **perte de données**. Le changement a été annulé.
+
+### 8. Destruction — `terraform destroy`
+
+```bash
+terraform plan -destroy   # prévisualisation uniquement
+terraform destroy         # équivalent à : terraform apply -destroy
+terraform state list      # (vide)
+```
+
+Le fichier `terraform.tfstate` est conservé, mais sa section `"resources"` est vide.
+
+---
+
+## 📖 Ce que j'ai appris
+
+**Les symboles du plan**
+
+| Symbole | Signification |
+|---------|---------------|
+| `+` | création |
+| `~` | modification sur place |
+| `-/+` | remplacement (destruction puis recréation) |
+| `-` | destruction |
+
+**Le state**
+- `terraform.tfstate` fait le lien entre le code (`aws_s3_bucket.lab_tp001`) et la ressource réelle dans AWS.
+- À chaque `plan`, Terraform compare le code, le state et l'infrastructure réelle (étape de *refresh*).
+- Il peut contenir des secrets en clair : il ne doit **jamais** être versionné.
+
+**Les versions**
+- `required_providers` indique **quel provider installer** ; le bloc `provider` indique **comment le configurer**.
+- `~> 6.0` accepte 6.x mais pas 7.0 ; `~> 6.0.0` n'accepte que 6.0.x.
+- `.terraform.lock.hcl` doit être versionné pour garantir les mêmes versions partout.
+
+**Les bonnes pratiques**
+- Nommer les ressources en **snake_case** (`lab_tp001`).
+- Respecter une convention de tags commune (`Environment`, pas `Env`).
+- Toujours relire le plan et repérer `-/+` et `forces replacement` avant un apply.
+- Utiliser `plan -out` puis `apply <plan>` pour appliquer exactement ce qui a été relu.
+
+---
+
+## 🐛 Difficultés rencontrées et solutions
+
+### Motifs du `.gitignore`
+
+**Problème :** mes premiers motifs (`.tfvars*`, `.terraform.*`, `.tfstate`) ne protégeaient pas les bons fichiers. `.terraform.*` ignorait même `.terraform.lock.hcl`, qui doit être versionné, tout en laissant passer le dossier `.terraform/`.
+
+**Solution :** sans étoile, Git cherche un nom exact ; `*.ext` cible les fichiers qui **se terminent** par l'extension ; `dossier/` cible un dossier.
+
+```gitignore
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+tfplan
+```
+
+### Région AWS CLI invalide
+
+**Problème :** `aws sts get-caller-identity` renvoyait `Could not connect to the endpoint URL: "https://sts.yes.amazonaws.com/"`.
+
+**Cause :** lors de `aws configure`, « yes » avait été saisi comme région par défaut.
+
+**Solution :** `aws configure set region us-east-1`. Terraform fonctionnait malgré tout, car la région déclarée dans le bloc `provider` prime sur celle de la CLI.
+
+### Premier push refusé
+
+**Problème :** `error: src refspec main does not match any`.
+
+**Cause :** la branche `main` ne contenait encore aucun commit.
+
+**Solution :** `git add .`, puis `git commit`, puis `git push -u origin main`.
+
+---
+
+## ✅ Résultat
+
+- [x] Provider AWS déclaré et versionné
+- [x] Bucket S3 créé, modifié puis détruit avec Terraform
+- [x] Lecture des plans `+`, `~` et `-/+`
+- [x] State exploré avec `terraform state list` et `state show`
+- [x] Aucun fichier sensible poussé sur GitHub
+- [x] Infrastructure détruite : coût AWS nul
+
+---
+
+## 📚 Ressources
+
+- [Exam Content List — Terraform Associate 004](https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004)
+- [Ressource `aws_s3_bucket` — Terraform Registry](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket)
+- [Core Terraform Workflow](https://developer.hashicorp.com/terraform/intro/core-workflow)
+- [Version Constraints](https://developer.hashicorp.com/terraform/language/expressions/version-constraints)
+
+---
+
+ ➡️ TP02 — Providers, versions et lock file
