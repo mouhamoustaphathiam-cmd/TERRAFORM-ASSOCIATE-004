@@ -1,4 +1,4 @@
-# 🔌 TP02 — Providers, contraintes de version et lock file
+# TP02 — Providers, contraintes de version et lock file
 
 ![Terraform](https://img.shields.io/badge/Terraform-%E2%89%A5%201.12-7B42BC?logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-S3-FF9900?logo=amazonwebservices&logoColor=white)
@@ -8,11 +8,11 @@
 ![Exam](https://img.shields.io/badge/Terraform%20Associate-004-844FBA)
 ![Status](https://img.shields.io/badge/Status-Completed-success)
 
-> 👤 **Réalisé par Mouhamadou Moustapha THIAM** — Ingénieur DevOps / DevSecOps
+> **Réalisé par Mouhamadou Moustapha THIAM** — Ingénieur DevOps / DevSecOps
 
 ---
 
-## 📌 Objectif
+## Objectif
 
 Comprendre **comment Terraform installe, versionne et utilise les providers** :
 
@@ -34,7 +34,7 @@ Comprendre **comment Terraform installe, versionne et utilise les providers** :
 
 ---
 
-## 🏗️ Ressources déployées
+## Ressources déployées
 
 | Adresse Terraform | Provider | Rôle | Valeur obtenue |
 |-------------------|----------|------|----------------|
@@ -43,7 +43,7 @@ Comprendre **comment Terraform installe, versionne et utilise les providers** :
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```text
 tp02-providers/
@@ -55,7 +55,7 @@ tp02-providers/
 
 ---
 
-## 🧩 Code
+## Code
 
 ### `versions.tf`
 
@@ -93,7 +93,7 @@ resource "aws_s3_bucket" "tp02-" {
 
 ---
 
-## 🔬 Déroulé et observations
+## Déroulé et observations
 
 ### 1. Installation de deux providers
 
@@ -102,7 +102,7 @@ terraform init
 ```
 
 Sans contrainte de version, Terraform a installé **la version la plus récente** de `random` (3.9.1).
-⚠️ Ce n'est vrai qu'en l'absence de lock file : s'il existe, `init` réinstalle toujours la version verrouillée.
+**Attention :** Ce n'est vrai qu'en l'absence de lock file : s'il existe, `init` réinstalle toujours la version verrouillée.
 
 ### 2. Où sont stockés les providers ?
 
@@ -143,7 +143,7 @@ Ajout de la contrainte `~> 3.6.0` sur `random` alors que le lock file contenait 
 | `.terraform.lock.hcl` | version verrouillée **3.9.1** |
 | `versions.tf` | uniquement **3.6.x** |
 
-➡️ `terraform init` **échoue** : il ne modifie jamais une version verrouillée de lui-même.
+ `terraform init` **échoue** : il ne modifie jamais une version verrouillée de lui-même.
 
 **Résolution :**
 
@@ -170,7 +170,7 @@ terraform providers
 
 ---
 
-## 📖 Ce que j'ai appris
+## Ce que j'ai appris
 
 - `required_providers` = **quoi installer** ; bloc `provider` = **comment configurer**.
 - `>= 1.2` n'est pas `>= 1.12` : les versions se comparent **nombre par nombre** (1.12 > 1.9).
@@ -182,7 +182,7 @@ terraform providers
 
 ---
 
-## 🐛 Difficultés rencontrées et solutions
+## Difficultés rencontrées et solutions
 
 ### Nom local ≠ nom du bucket AWS
 
@@ -191,11 +191,11 @@ terraform providers
 **Cause :** j'avais mis `tp02-` comme **nom local** de la ressource, mais laissé le bloc vide. Sans argument `bucket`, le provider AWS génère un nom automatiquement. Le `random_pet` existait, mais rien ne le reliait au bucket.
 
 ```hcl
-# ❌ Avant
+# Avant
 resource "aws_s3_bucket" "tp02-" {
 }
 
-# ✅ Après
+# Après
 resource "aws_s3_bucket" "tp02-" {
   bucket = "tp02-${random_pet.stockage.id}"
 }
@@ -223,7 +223,7 @@ Terraform identifie une ressource **uniquement par son adresse**. La solution pr
 
 ---
 
-## ✅ Résultat
+## Résultat
 
 - [x] Deux providers déclarés et installés
 - [x] Structure de `.terraform/providers/` analysée
@@ -234,7 +234,7 @@ Terraform identifie une ressource **uniquement par son adresse**. La solution pr
 
 ---
 
-## 📚 Ressources
+## Ressources
 
 - [Exam Content List — Terraform Associate 004](https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004)
 - [Provider Requirements](https://developer.hashicorp.com/terraform/language/providers/requirements)
@@ -243,7 +243,7 @@ Terraform identifie une ressource **uniquement par son adresse**. La solution pr
 
 ---
 
-## 👤 Auteur
+## Auteur
 
 **Mouhamadou Moustapha THIAM**
 Ingénieur DevOps / DevSecOps
@@ -254,4 +254,4 @@ Ingénieur DevOps / DevSecOps
 
 ---
 
-⬅️ [TP01 — Workflow](../tp01-workflow/README.md) · [Sommaire](../README.md) · ➡️ TP03 — Plusieurs providers et alias
+Précédent : [TP01 — Workflow](../tp01-workflow/README.md) · [Sommaire](../README.md) · Suivant : TP03 — Plusieurs providers et alias
