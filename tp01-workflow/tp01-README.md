@@ -1,4 +1,4 @@
-# 🚀 TP01 — Workflow Terraform complet sur AWS S3
+# TP01 — Workflow Terraform complet sur AWS S3
 
 ![Terraform](https://img.shields.io/badge/Terraform-%E2%89%A5%201.12-7B42BC?logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-S3-FF9900?logo=amazonwebservices&logoColor=white)
@@ -8,9 +8,11 @@
 ![Exam](https://img.shields.io/badge/Terraform%20Associate-004-844FBA)
 ![Status](https://img.shields.io/badge/Status-Completed-success)
 
+> **Réalisé par Mouhamadou Moustapha THIAM** — Ingénieur DevOps / DevSecOps
+
 ---
 
-## 📌 Objectif
+## Objectif
 
 Déployer un premier bucket **Amazon S3** avec Terraform et parcourir **tout le cycle de vie** d'une ressource : écriture du code, initialisation, validation, planification, application, modification sur place, remplacement, puis destruction.
 
@@ -34,7 +36,7 @@ Ce TP fait partie de ma préparation à la certification **HashiCorp Certified: 
 
 ---
 
-## 🏗️ Ressource déployée
+## Ressource déployée
 
 | Adresse Terraform | Type | Nom dans AWS | Région |
 |-------------------|------|--------------|--------|
@@ -50,7 +52,7 @@ Ce TP fait partie de ma préparation à la certification **HashiCorp Certified: 
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```text
 tp01-workflow/
@@ -71,7 +73,7 @@ Fichiers générés localement et **exclus de Git** :
 
 ---
 
-## 🧩 Code
+## Code
 
 ### `versions.tf`
 
@@ -106,7 +108,7 @@ resource "aws_s3_bucket" "lab_tp001" {
 
 ---
 
-## 🔄 Workflow réalisé
+## Workflow réalisé
 
 ```mermaid
 flowchart LR
@@ -219,7 +221,7 @@ Le fichier `terraform.tfstate` est conservé, mais sa section `"resources"` est 
 
 ---
 
-## 📖 Ce que j'ai appris
+## Ce que j'ai appris
 
 **Les symboles du plan**
 
@@ -248,7 +250,7 @@ Le fichier `terraform.tfstate` est conservé, mais sa section `"resources"` est 
 
 ---
 
-## 🐛 Difficultés rencontrées et solutions
+## Difficultés rencontrées et solutions
 
 ### Motifs du `.gitignore`
 
@@ -283,7 +285,7 @@ tfplan
 
 ---
 
-## ✅ Résultat
+## Résultat
 
 - [x] Provider AWS déclaré et versionné
 - [x] Bucket S3 créé, modifié puis détruit avec Terraform
@@ -294,7 +296,7 @@ tfplan
 
 ---
 
-## 📚 Ressources
+## Ressources
 
 - [Exam Content List — Terraform Associate 004](https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004)
 - [Ressource `aws_s3_bucket` — Terraform Registry](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket)
@@ -303,13 +305,16 @@ tfplan
 
 ---
 
-👤 Auteur
+## Auteur
 
-Mouhamadou Moustapha THIAM Ingénieur DevOps / DevSecOps
+**Mouhamadou Moustapha THIAM**
+Ingénieur DevOps / DevSecOps
 
-Infrastructure as Code · Cloud AWS · CI/CD · Sécurité
+[![GitHub](https://img.shields.io/badge/GitHub-mouhamoustaphathiam--cmd-181717?logo=github&logoColor=white)](https://github.com/mouhamoustaphathiam-cmd)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Profil-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/VOTRE-PROFIL)
 
+*Infrastructure as Code · Cloud AWS · CI/CD · Sécurité*
 
 ---
 
- ➡️ TP02 — Providers, versions et lock file
+Précédent : [Retour au sommaire](../README.md) · Suivant : TP02 — Providers, versions et lock file
