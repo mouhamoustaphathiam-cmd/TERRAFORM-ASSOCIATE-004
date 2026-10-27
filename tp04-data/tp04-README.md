@@ -1,4 +1,4 @@
-# 🔍 TP04 — Blocs `resource` vs `data` et références entre ressources
+# TP04 — Blocs `resource` vs `data` et références entre ressources
 
 ![Terraform](https://img.shields.io/badge/Terraform-%E2%89%A5%201.12-7B42BC?logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-S3%20%7C%20STS-FF9900?logo=amazonwebservices&logoColor=white)
@@ -8,11 +8,11 @@
 ![Exam](https://img.shields.io/badge/Terraform%20Associate-004-844FBA)
 ![Status](https://img.shields.io/badge/Status-Completed-success)
 
-> 👤 **Réalisé par Mouhamadou Moustapha THIAM** — Ingénieur DevOps / DevSecOps
+> **Réalisé par Mouhamadou Moustapha THIAM** — Ingénieur DevOps / DevSecOps
 
 ---
 
-## 📌 Objectif
+## Objectif
 
 Comprendre la différence entre **créer** et **lire** de l'infrastructure avec Terraform :
 
@@ -32,19 +32,19 @@ Comprendre la différence entre **créer** et **lire** de l'infrastructure avec 
 
 ---
 
-## ⚖️ `resource` vs `data`
+## `resource` vs `data`
 
 | | `resource` (managed resource) | `data` (data resource) |
 |---|---|---|
 | Rôle | **Créer et gérer** un objet | **Lire** un objet existant |
 | Adresse | `<TYPE>.<NOM>` | **`data.`**`<TYPE>.<NOM>` |
 | Lu ou créé… | créé à l'**apply** | lu au **plan** |
-| Au `destroy` | ❌ supprimé | ✅ jamais touché |
+| Au `destroy` | supprimé | jamais touché |
 | Objet absent dans le cloud | recréé au prochain apply | le plan **échoue** |
 
 ---
 
-## 🏗️ Blocs utilisés
+## Blocs utilisés
 
 | Adresse Terraform | Type de bloc | Rôle |
 |-------------------|--------------|------|
@@ -62,7 +62,7 @@ flowchart LR
 
 ---
 
-## 🧩 Code
+## Code
 
 ### `main.tf`
 
@@ -95,7 +95,7 @@ data "aws_s3_bucket" "hands_bucket_create" {
 
 ---
 
-## 🔬 Déroulé et observations
+## Déroulé et observations
 
 ### 1. Des data sources seules : rien n'est créé
 
@@ -139,9 +139,9 @@ Construction d'une adresse :
 | Nom local | `aws_id` |
 | Attribut | `account_id` |
 
-➡️ `data.aws_caller_identity.aws_id.account_id`
+ `data.aws_caller_identity.aws_id.account_id`
 
-ℹ️ Depuis le provider AWS 6.x, l'attribut `name` de `aws_region` est **déprécié** au profit de `region`.
+**Note :** Depuis le provider AWS 6.x, l'attribut `name` de `aws_region` est **déprécié** au profit de `region`.
 
 ### 3. Une ressource alimentée par des data sources
 
@@ -188,14 +188,14 @@ terraform destroy
 
 | Bucket | Type de bloc | Après le destroy |
 |--------|--------------|------------------|
-| `tp04-<ACCOUNT_ID>-us-east-1` | `resource` | ❌ supprimé |
-| `tp04-datasources` | `data` | ✅ toujours présent dans AWS |
+| `tp04-<ACCOUNT_ID>-us-east-1` | `resource` | supprimé |
+| `tp04-datasources` | `data` | toujours présent dans AWS |
 
 Le plan de destruction n'annonçait **qu'une seule ressource**. **Terraform ne détruit que ce qu'il gère.**
 
 ---
 
-## 📖 Ce que j'ai appris
+## Ce que j'ai appris
 
 - Une data source est **en lecture seule** : elle ne crée, ne modifie et ne détruit jamais rien.
 - Son adresse commence toujours par **`data.`** ; sans ce préfixe, Terraform cherche une ressource gérée.
@@ -207,7 +207,7 @@ Le plan de destruction n'annonçait **qu'une seule ressource**. **Terraform ne d
 
 ---
 
-## 🐛 Difficultés rencontrées et solutions
+## Difficultés rencontrées et solutions
 
 ### Adresse incomplète dans la console
 
@@ -236,7 +236,7 @@ Le plan de destruction n'annonçait **qu'une seule ressource**. **Terraform ne d
 
 ---
 
-## ✅ Résultat
+## Résultat
 
 - [x] Data sources `aws_caller_identity`, `aws_region` et `aws_s3_bucket` lues
 - [x] Adresses construites et testées dans `terraform console`
@@ -247,7 +247,7 @@ Le plan de destruction n'annonçait **qu'une seule ressource**. **Terraform ne d
 
 ---
 
-## 📚 Ressources
+## Ressources
 
 - [Exam Content List — Terraform Associate 004](https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004)
 - [Data Sources](https://developer.hashicorp.com/terraform/language/data-sources)
@@ -257,7 +257,7 @@ Le plan de destruction n'annonçait **qu'une seule ressource**. **Terraform ne d
 
 ---
 
-## 👤 Auteur
+## Auteur
 
 **Mouhamadou Moustapha THIAM**
 Ingénieur DevOps / DevSecOps
@@ -268,3 +268,4 @@ Ingénieur DevOps / DevSecOps
 
 ---
 
+Précédent : [TP03 — Alias](../tp03-alias/README.md) · [Sommaire](../README.md) · Suivant : TP05 — Variables, outputs et types complexes
