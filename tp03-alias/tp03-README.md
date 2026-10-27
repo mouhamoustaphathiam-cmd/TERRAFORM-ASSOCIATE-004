@@ -1,4 +1,4 @@
-# 🌍 TP03 — Plusieurs configurations de provider et alias (multi-régions)
+# TP03 — Plusieurs configurations de provider et alias (multi-régions)
 
 ![Terraform](https://img.shields.io/badge/Terraform-%E2%89%A5%201.12-7B42BC?logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-S3-FF9900?logo=amazonwebservices&logoColor=white)
@@ -8,11 +8,11 @@
 ![Exam](https://img.shields.io/badge/Terraform%20Associate-004-844FBA)
 ![Status](https://img.shields.io/badge/Status-Completed-success)
 
-> 👤 **Réalisé par Mouhamadou Moustapha THIAM** — Ingénieur DevOps / DevSecOps
+> **Réalisé par Mouhamadou Moustapha THIAM** — Ingénieur DevOps / DevSecOps
 
 ---
 
-## 📌 Objectif
+## Objectif
 
 Déployer des ressources dans **deux régions AWS différentes** depuis **un seul projet Terraform**, grâce aux **alias de provider**.
 
@@ -28,7 +28,7 @@ Déployer des ressources dans **deux régions AWS différentes** depuis **un seu
 
 ---
 
-## 🏗️ Ressources déployées
+## Ressources déployées
 
 | Adresse Terraform | Nom du bucket | Configuration de provider | Région |
 |-------------------|---------------|---------------------------|--------|
@@ -43,7 +43,7 @@ flowchart LR
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```text
 tp03-alias/
@@ -55,7 +55,7 @@ tp03-alias/
 
 ---
 
-## 🧩 Code
+## Code
 
 ### `main.tf`
 
@@ -83,7 +83,7 @@ resource "aws_s3_bucket" "stockage2" {
 
 ---
 
-## 🔬 Déroulé et observations
+## Déroulé et observations
 
 ### 1. Deux providers « aws » sans alias → erreur
 
@@ -136,7 +136,7 @@ aws s3api get-bucket-location --bucket tp03-alias
 
 ---
 
-## 📖 Ce que j'ai appris
+## Ce que j'ai appris
 
 - **Une seule configuration par défaut** par provider ; les autres doivent avoir un `alias`.
 - Une ressource **sans** argument `provider` utilise la configuration **par défaut**.
@@ -162,7 +162,7 @@ module "sauvegarde" {
 
 ---
 
-## 🐛 Difficultés rencontrées et solutions
+## Difficultés rencontrées et solutions
 
 ### Nom de bucket invalide
 
@@ -188,7 +188,7 @@ terraform state show aws_s3_bucket.stockage1   # ligne bucket = "..."
 
 ---
 
-## ✅ Résultat
+## Résultat
 
 - [x] Deux configurations du provider AWS (défaut + alias)
 - [x] Deux buckets déployés dans deux régions depuis un seul projet
@@ -198,7 +198,7 @@ terraform state show aws_s3_bucket.stockage1   # ligne bucket = "..."
 
 ---
 
-## 📚 Ressources
+## Ressources
 
 - [Exam Content List — Terraform Associate 004](https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004)
 - [Provider Configuration — alias](https://developer.hashicorp.com/terraform/language/providers/configuration#alias-multiple-provider-configurations)
@@ -207,7 +207,7 @@ terraform state show aws_s3_bucket.stockage1   # ligne bucket = "..."
 
 ---
 
-## 👤 Auteur
+## Auteur
 
 **Mouhamadou Moustapha THIAM**
 Ingénieur DevOps / DevSecOps
@@ -217,3 +217,5 @@ Ingénieur DevOps / DevSecOps
 *Infrastructure as Code · Cloud AWS · CI/CD · Sécurité*
 
 ---
+
+Précédent : [TP02 — Providers](../tp02-providers/README.md) · [Sommaire](../README.md) · Suivant : TP04 — `resource` vs `data`
