@@ -1,4 +1,4 @@
-# 🎛️ TP05 — Variables, outputs et types complexes
+# TP05 — Variables, outputs et types complexes
 
 ![Terraform](https://img.shields.io/badge/Terraform-%E2%89%A5%201.12-7B42BC?logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-S3-FF9900?logo=amazonwebservices&logoColor=white)
@@ -8,11 +8,11 @@
 ![Exam](https://img.shields.io/badge/Terraform%20Associate-004-844FBA)
 ![Status](https://img.shields.io/badge/Status-Completed-success)
 
-> 👤 **Réalisé par Mouhamadou Moustapha THIAM** — Ingénieur DevOps / DevSecOps
+> **Réalisé par Mouhamadou Moustapha THIAM** — Ingénieur DevOps / DevSecOps
 
 ---
 
-## 📌 Objectif
+## Objectif
 
 Rendre une configuration Terraform **réutilisable** en remplaçant les valeurs écrites en dur :
 
@@ -36,7 +36,7 @@ Rendre une configuration Terraform **réutilisable** en remplaçant les valeurs 
 
 ---
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```text
 tp05-variables-outputs/
@@ -53,7 +53,7 @@ tp05-variables-outputs/
 
 ---
 
-## 🧩 Code
+## Code
 
 ### `variables.tf`
 
@@ -139,7 +139,7 @@ project = "mon-projet"
 
 ---
 
-## 🔬 Déroulé et observations
+## Déroulé et observations
 
 ### 1. Variable obligatoire
 
@@ -178,7 +178,7 @@ Exemple d'utilisation dans un script :
 aws s3 cp test.txt "s3://$(terraform output -raw aws_s3_bucket)/"
 ```
 
-### 3. Ordre de priorité des valeurs 🏆
+### 3. Ordre de priorité des valeurs 
 
 Test réalisé en empilant les sources pour la variable `environment` :
 
@@ -186,7 +186,7 @@ Test réalisé en empilant les sources pour la variable `environment` :
 |------|----------------|----------------|
 | 0 | `default = "dev"` | `dev` |
 | 1 | `terraform.tfvars` → `"tfvars"` | `tfvars` |
-| 2 | `$env:TF_VAR_environment="envvar"` | **`tfvars`** 😮 |
+| 2 | `$env:TF_VAR_environment="envvar"` | **`tfvars`**  |
 | 3 | `test.auto.tfvars` → `"auto"` | `auto` |
 | 4 | `-var="environment=cli"` | `cli` |
 
@@ -202,17 +202,17 @@ Test réalisé en empilant les sources pour la variable `environment` :
 
 > **CLI > auto.tfvars > tfvars > env > défaut**
 
-⚠️ Piège classique : la variable d'environnement est **plus faible** que les fichiers `.tfvars`.
-ℹ️ Seuls `terraform.tfvars` et `*.auto.tfvars` sont chargés automatiquement ; un `prod.tfvars` se passe avec `-var-file="prod.tfvars"`.
+**Attention :** Piège classique : la variable d'environnement est **plus faible** que les fichiers `.tfvars`.
+**Note :** Seuls `terraform.tfvars` et `*.auto.tfvars` sont chargés automatiquement ; un `prod.tfvars` se passe avec `-var-file="prod.tfvars"`.
 
 ### 4. Conversion automatique des types
 
 | Type attendu | Valeur fournie | Résultat |
 |--------------|----------------|----------|
-| `string` | `123` | ✅ converti en `"123"` |
-| `string` | `["dev"]` | ❌ erreur |
-| `bool` | `"true"` | ✅ converti en `true` |
-| `bool` | `"oui"` | ❌ erreur |
+| `string` | `123` | converti en `"123"` |
+| `string` | `["dev"]` | erreur |
+| `bool` | `"true"` | converti en `true` |
+| `bool` | `"oui"` | erreur |
 
 Terraform convertit tout ce qui l'est **sans ambiguïté**.
 
@@ -243,14 +243,14 @@ Remplacement des tags par la map `balise` (le tag `Environment` disparaît) :
 
 | `force_destroy` | Bucket vide | Bucket non vide |
 |-----------------|-------------|-----------------|
-| `false` (défaut) | ✅ détruit | ❌ échec (`BucketNotEmpty`) |
-| `true` | ✅ détruit | ✅ fichiers supprimés, puis le bucket |
+| `false` (défaut) | détruit | échec (`BucketNotEmpty`) |
+| `true` | détruit | fichiers supprimés, puis le bucket |
 
 `false` **protège les données**, mais **n'empêche pas** la destruction d'un bucket vide. Pour interdire toute destruction : `lifecycle { prevent_destroy = true }` (TP07).
 
 ---
 
-## 📖 Ce que j'ai appris
+## Ce que j'ai appris
 
 - Une variable se référence avec **`var.<nom>`**, une ressource avec **`<TYPE>.<NOM>.<ATTRIBUT>`**, une data source avec **`data.<TYPE>.<NOM>.<ATTRIBUT>`**.
 - **`type`** décrit la **forme** (le moule), **`default`** contient les **valeurs**.
@@ -262,7 +262,7 @@ Remplacement des tags par la map `balise` (le tag `Environment` disparaît) :
 
 ---
 
-## 🐛 Difficultés rencontrées et solutions
+## Difficultés rencontrées et solutions
 
 ### Préfixe `var.` sur une ressource
 
@@ -291,13 +291,13 @@ Remplacement des tags par la map `balise` (le tag `Environment` disparaît) :
 
 ### Idées reçues corrigées
 
-- ❌ « La variable d'environnement passe avant `terraform.tfvars` » → ✅ c'est l'inverse.
-- ❌ « Une `map` n'accepte pas les booléens » → ✅ `map(bool)` existe ; une map impose seulement **un type unique** pour toutes ses valeurs.
-- ❌ « `force_destroy = false` empêche la destruction » → ✅ il empêche seulement de supprimer un bucket **non vide**.
+- Faux : « La variable d'environnement passe avant `terraform.tfvars` » → Vrai : c'est l'inverse.
+- Faux : « Une `map` n'accepte pas les booléens » → Vrai : `map(bool)` existe ; une map impose seulement **un type unique** pour toutes ses valeurs.
+- Faux : « `force_destroy = false` empêche la destruction » → Vrai : il empêche seulement de supprimer un bucket **non vide**.
 
 ---
 
-## ✅ Résultat
+## Résultat
 
 - [x] Variables `string`, `list`, `map` et `object` déclarées et utilisées
 - [x] Outputs exposés et relus avec `terraform output` (`-raw`, `-json`)
@@ -308,7 +308,7 @@ Remplacement des tags par la map `balise` (le tag `Environment` disparaît) :
 
 ---
 
-## 📚 Ressources
+## Ressources
 
 - [Exam Content List — Terraform Associate 004](https://developer.hashicorp.com/terraform/tutorials/certification-004/associate-review-004)
 - [Input Variables](https://developer.hashicorp.com/terraform/language/values/variables)
@@ -319,7 +319,7 @@ Remplacement des tags par la map `balise` (le tag `Environment` disparaît) :
 
 ---
 
-## 👤 Auteur
+## Auteur
 
 **Mouhamadou Moustapha THIAM**
 Ingénieur DevOps / DevSecOps
@@ -329,3 +329,5 @@ Ingénieur DevOps / DevSecOps
 *Infrastructure as Code · Cloud AWS · CI/CD · Sécurité*
 
 ---
+
+Précédent : [TP04 — Data sources](../tp04-data/README.md) · [Sommaire](../README.md) · Suivant : TP06 — Expressions, fonctions, `count`, `for_each`
